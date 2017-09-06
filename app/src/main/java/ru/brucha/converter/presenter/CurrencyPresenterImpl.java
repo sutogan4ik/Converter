@@ -32,6 +32,17 @@ public class CurrencyPresenterImpl implements CurrencyPresenter{
         fileUtil = new FileUtil();
     }
 
+    @Override
+    public void destroy() {
+        view = null;
+        cacheFile = null;
+        fileUtil = null;
+        if(interactor != null){
+            interactor.destroy();
+        }
+        interactor = null;
+    }
+
     public void setFileUtil(FileUtil fileUtil) {
         this.fileUtil = fileUtil;
     }

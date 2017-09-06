@@ -10,4 +10,6 @@ public interface CurrencyPresenter {
     void initData();
 
     void calculate(Valute source, Valute converted, String count);
+
+    void destroy();
 }

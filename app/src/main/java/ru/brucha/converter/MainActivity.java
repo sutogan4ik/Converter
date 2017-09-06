@@ -65,6 +65,13 @@ public class MainActivity extends AppCompatActivity implements CurrencyView{
         presenter.initData();
     }
 
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        presenter.destroy();
+    }
+
     @Override
     public void showUI(ValCurs currencies) {
         String dateText = "Последнее обновление: " + currencies.getDate();
