@@ -82,7 +82,7 @@ public class CurrencyPresenterImpl implements CurrencyPresenter{
         Double countDouble = Double.parseDouble(count);
         float toRub = (float) (sourceValue * countDouble / source.getNominal());
         float toConverted = (float) (toRub / convertedValue * converted.getNominal());
-        String result = toConverted + " " + converted.getCharCode();
+        String result = String.format("%.2f", toConverted) + " " + converted.getCharCode();
         if(view != null){
             view.showResult(result);
         }
