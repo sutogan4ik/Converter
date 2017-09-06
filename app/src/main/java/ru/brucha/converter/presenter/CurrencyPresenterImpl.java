@@ -8,6 +8,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.text.NumberFormat;
 
+import ru.brucha.converter.FileUtil;
 import ru.brucha.converter.entity.ErrorType;
 import ru.brucha.converter.entity.ValCurs;
 import ru.brucha.converter.entity.Valute;
@@ -22,11 +23,17 @@ public class CurrencyPresenterImpl implements CurrencyPresenter{
     private CurrencyInteractor interactor;
     private CurrencyView view;
     private File cacheFile;
+    private FileUtil fileUtil;
 
     public CurrencyPresenterImpl(CurrencyInteractor interactor, CurrencyView view, File cacheFile) {
         this.interactor = interactor;
         this.view = view;
         this.cacheFile = cacheFile;
+        fileUtil = new FileUtil();
+    }
+
+    public void setFileUtil(FileUtil fileUtil) {
+        this.fileUtil = fileUtil;
     }
 
     @Override
@@ -39,13 +46,13 @@ public class CurrencyPresenterImpl implements CurrencyPresenter{
             @Override
             public void onLoadComplete(ValCurs currencies) {
                 currencies.getList().add(0, getRub());
-                saveToFile(currencies);
+                fileUtil.saveToFile(currencies, cacheFile);
                 showUI(currencies);
             }
 
             @Override
             public void onLoadError(ErrorType errorType) {
-                ValCurs curs = loadFile();
+                ValCurs curs = fileUtil.loadFile(cacheFile);
                 if(curs != null){
                     showUI(curs);
                 }else{
@@ -104,34 +111,4 @@ public class CurrencyPresenterImpl implements CurrencyPresenter{
         }
     }
 
-    private void saveToFile(ValCurs currencies){
-        try {
-            if(!cacheFile.exists()){
-                cacheFile.getParentFile().mkdirs();
-                cacheFile.createNewFile();
-            }
-            FileOutputStream fileOutputStream = new FileOutputStream(cacheFile);
-            ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
-            objectOutputStream.writeObject(currencies);
-            objectOutputStream.close();
-            fileOutputStream.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private ValCurs loadFile(){
-        try {
-            if(!cacheFile.exists()){
-                cacheFile.getParentFile().mkdirs();
-                cacheFile.createNewFile();
-            }
-            FileInputStream inputStream = new FileInputStream(cacheFile);
-            ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
-            return (ValCurs) objectInputStream.readObject();
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
 }
